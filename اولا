@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // القوائم: يمكن القراءة للجميع، لكن لا يسمح بالكتابة مباشرة من العميل.
+    match /lists/{listId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // التوكنات: لا يسمح بالقراءة أو الكتابة من العميل (فقط Functions تستخدم Admin SDK)
+    match /tokens/{listId} {
+      allow read, write: if false;
+    }
+
+    // امنع أي وصول غير مقصود لمجموعات أخرى
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
